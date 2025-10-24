@@ -23,7 +23,7 @@ final class HelloController
     {
         // Retornando array também funciona, o Router embrulha em Response
         return [
-            'id' => env('APP_NAME', 'Laravel'),
+            'id' => $request->params['id'] ?? null,
             'detail' => 'Exemplo de leitura por id'
         ];
     }
