@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\Request;
-use App\Core\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 final class HelloController
 {
-    public function index(Request $request): Response
+    public function index(Request $request): ResponseInterface
     {
-        $name = $request->query['name'] ?? 'mundo';
-        return new Response([
-            'message' => "Olá, {$name}",
-            'params'  => $request->params,
-            'query'   => $request->query,
+        $q = $request->getQueryParams();
+        $name = $q['name'] ?? 'world';
+        $params = $request->getAttribute('route.params', []);
+        return json_response([
+            'message' => "Hello, {$name}",
+            'params'  => $params,
+            'query'   => $q,
+            'app'     => env('APP_NAME', 'Framilywork')
         ]);
     }
 
-    public function show(Request $request): array
+    public function show(Request $request): ResponseInterface
     {
-        // Retornando array também funciona, o Router embrulha em Response
-        return [
-            'id' => $request->params['id'] ?? null,
-            'detail' => 'Exemplo de leitura por id'
-        ];
+        $id = $request->getAttribute('route.params')['id'] ?? null;
+        return json_response(['id' => $id, 'detail' => 'request id: ' . $id]);
     }
 }

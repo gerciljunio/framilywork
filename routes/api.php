@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 use App\Controllers\HelloController;
-use App\Core\Router;
+use App\Http\Middleware\ExampleMiddleware;
+use App\Http\Router;
 
-return static function (Router $router): void {
-    $router->get('/health', fn () => ['status' => 'ok']);
+return static function (Router $r): void {
+    $r->get('/health', fn () => ['status' => 'ok']);
 
-    $router->get('/hello', [HelloController::class, 'index']);
-    $router->get('/hello/{id}', [HelloController::class, 'show']);
-
-    // Exemplos:
-    // $router->post('/users', [UserController::class, 'store']);
-    // $router->put('/users/{id}', [UserController::class, 'update']);
-    // $router->delete('/users/{id}', [UserController::class, 'delete']);
+    // Rota com middleware por rota (ExampleMiddleware)
+    $r->get('/hello', [HelloController::class, 'index'], [ExampleMiddleware::class]);
+    $r->get('/hello/{id}', [HelloController::class, 'show']);
 };

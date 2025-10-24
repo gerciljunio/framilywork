@@ -2,32 +2,32 @@
 
 declare(strict_types=1);
 
-use App\Core\Env;
-use App\Core\Request;
-use App\Core\Response;
-use App\Core\Router;
+use App\Http\Middleware\CorsMiddleware;
+use App\Http\Router;
+use App\Support\Env;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7Server\ServerRequestCreator;
+use Relay\Relay;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 Env::load(__DIR__ . '/../.env');
 
-set_exception_handler(function (Throwable $e) {
-    http_response_code(500);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode([
-        'error'   => 'Erro interno',
-        'type'    => $e::class,
-        'message' => $e->getMessage(),
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-});
+$psr17 = new Psr17Factory();
+$creator = new ServerRequestCreator($psr17, $psr17, $psr17, $psr17);
+$request = $creator->fromGlobals();
 
 $router = new Router();
-$routes = require __DIR__ . '/../routes/api.php';
-$routes($router);
+(require __DIR__ . '/../routes/api.php')($router);
 
-$request  = Request::fromGlobals();
-$response = $router->dispatch($request);
+// Global middlewares
+$queue = [
+    new CorsMiddleware(),
+    $router
+];
 
-if ($response instanceof Response) {
-    $response->send();
-}
+$response = (new Relay($queue))->handle($request);
+
+$emitter = new SapiEmitter();
+$emitter->emit($response);
