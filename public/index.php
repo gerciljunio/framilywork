@@ -29,5 +29,8 @@ $queue = [
 
 $response = (new Relay($queue))->handle($request);
 
-$emitter = new SapiEmitter();
-$emitter->emit($response);
+// Garanta que o emissor SAPI não rode sob Swoole
+if (!isset($_SERVER['FW_SWOOLE_BRIDGE'])) {
+    $emitter = new SapiEmitter();
+    $emitter->emit($response);
+}
