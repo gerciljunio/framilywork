@@ -16,5 +16,9 @@
     "files": [
       "app/Support/Helpers.php"
     ]
+  },
+  "scripts": {
+    "frankenphp": "frankenphp run --config Caddyfile",
+    "serve": "php -S localhost:8010 -t public public/index.php"
   }
 }

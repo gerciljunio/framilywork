@@ -7,7 +7,8 @@ use App\Http\Middleware\ExampleMiddleware;
 use App\Http\Router;
 
 return static function (Router $r): void {
-    $r->get('/health', fn () => ['status' => 'ok']);
+    $r->get('/', fn () => ['status' => 'ok home']);
+    $r->get('/health', fn () => ['status' => 'ok health']);
 
     // Rota com middleware por rota (ExampleMiddleware)
     $r->get('/hello', [HelloController::class, 'index'], [ExampleMiddleware::class]);

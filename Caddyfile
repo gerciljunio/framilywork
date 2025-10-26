@@ -1,0 +1,12 @@
+{
+	frankenphp {
+		max_threads auto
+	}
+}
+
+:8010 {
+	php_server {
+		root ./public
+		worker ./index.php 4
+	}
+}
