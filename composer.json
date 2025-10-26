@@ -18,7 +18,7 @@
     ]
   },
   "scripts": {
-    "frankenphp": "frankenphp run --config Caddyfile",
+    "frankenphp": "frankenphp run --config Caddyfile || true",
     "serve": "php -S localhost:8010 -t public public/index.php"
   }
 }
